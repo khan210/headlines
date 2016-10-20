@@ -45,10 +45,11 @@ def home():
     currency_to = request.args.get("currency_to")
     if not currency_to:
         currency_to = DEFAULTS['currency_to']
-    rate = get_rate(currency_from , currency_to)    
+    rate, currencies = get_rate(currency_from , currency_to)          
     return render_template("home.html", articles= articles, \
 weather = weather , currency_from = currency_from , \
-currency_to = currency_to , rate = rate)
+currency_to = currency_to , rate = rate , \
+currencies= sorted(currencies))
 
 def get_news(query):
     if not query or query.lower() not in rss_feeds:
@@ -80,7 +81,7 @@ def get_rate(frm, to):
     parsed = json.loads(all_currency).get('rates')
     frm_rate = parsed.get(frm.upper())
     to_rate = parsed.get(to.upper())
-    return to_rate/frm_rate
+    return (to_rate / frm_rate , parsed.keys())
                 
     return render_template('home.html' , articles = feed['entries'] , weather=weather)
 
